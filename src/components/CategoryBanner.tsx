@@ -25,6 +25,11 @@ const categoryInfo: Record<string, { title: string; subtitle: string; bg: string
         subtitle: "Majestic lehenga cholis for weddings and grand events.",
         bg: "bg-primary/10"
     },
+    "Lehenghas": {
+        title: "Grand Lehenghas",
+        subtitle: "Majestic lehenga cholis for weddings and grand events.",
+        bg: "bg-primary/10"
+    },
     "Dress Materials": {
         title: "Custom Dress Materials",
         subtitle: "Create your own style with our premium unstitched fabrics.",
@@ -35,8 +40,18 @@ const categoryInfo: Record<string, { title: string; subtitle: string; bg: string
         subtitle: "The perfect finishing touch for your ethnic ensemble.",
         bg: "bg-secondary/10"
     },
+    "Duppatas": {
+        title: "Vibrant Duppatas",
+        subtitle: "The perfect finishing touch for your ethnic ensemble.",
+        bg: "bg-secondary/10"
+    },
     "New Arrivals": {
         title: "Fresh Collection",
+        subtitle: "Discover the latest trends in ethnic elegance.",
+        bg: "bg-primary/30"
+    },
+    "New Arrival": {
+        title: "Fresh Arrival",
         subtitle: "Discover the latest trends in ethnic elegance.",
         bg: "bg-primary/30"
     },

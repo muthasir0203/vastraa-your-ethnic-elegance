@@ -38,7 +38,21 @@ const Header = () => {
   const { wishlistItems } = useWishlist();
   const { data: categoriesData } = useCategories();
 
-  const categories = categoriesData?.map(c => c.name) || ["Sarees", "Kurtis", "Lehengas", "Suits", "Western Wear"];
+  const categories = [
+    "Sarees",
+    "Kurtis",
+    "Lehenghas",
+    "Duppatas",
+    "New Arrival",
+    "Festive Collection",
+    "Wedding Collection"
+  ];
+
+  const appPages = [
+    { name: "Gift Cards", path: "/gift-cards" },
+    { name: "Rewards", path: "/rewards" },
+    { name: "Download App", path: "/download" }
+  ];
 
   const cartCount = cartItems?.length || 0;
   const wishlistCount = wishlistItems?.length || 0;
@@ -218,19 +232,33 @@ const Header = () => {
 
       {/* Desktop nav */}
       <nav className="hidden md:block border-t border-border">
-        <div className="container flex items-center gap-6 h-10 overflow-x-auto scrollbar-hide">
-          {categories.map((cat) => (
-            <Link
-              key={cat}
-              to={`/products?category=${encodeURIComponent(cat)}`}
-              className={`text-sm font-body font-medium whitespace-nowrap transition-colors ${currentCategory === cat
-                ? "text-primary border-b-2 border-primary pb-1"
-                : "text-foreground/80 hover:text-primary"
-                }`}
-            >
-              {cat}
-            </Link>
-          ))}
+        <div className="container flex items-center justify-between h-10">
+          <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide pr-4 border-r border-border">
+            {categories.map((cat) => (
+              <Link
+                key={cat}
+                to={`/products?category=${encodeURIComponent(cat)}`}
+                className={`text-sm font-body font-medium whitespace-nowrap transition-colors ${currentCategory === cat
+                  ? "text-primary border-b-2 border-primary pb-1"
+                  : "text-foreground/80 hover:text-primary"
+                  }`}
+              >
+                {cat}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-6 pl-4 shrink-0">
+            {appPages.map((page) => (
+              <Link
+                key={page.name}
+                to={page.path}
+                className="text-sm font-body font-medium text-foreground/80 hover:text-primary transition-colors whitespace-nowrap"
+              >
+                {page.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
 
@@ -259,7 +287,18 @@ const Header = () => {
                 </Link>
               ))}
               <div className="pt-4 border-t border-border mt-4">
-                <Link to="/account" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 text-sm font-body font-medium text-foreground hover:bg-muted rounded-lg">
+                {appPages.map((page) => (
+                  <Link
+                    key={page.name}
+                    to={page.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 py-3 px-4 text-sm font-body font-medium text-foreground hover:bg-muted rounded-lg"
+                  >
+                    <Package size={18} className="text-muted-foreground" />
+                    {page.name}
+                  </Link>
+                ))}
+                <Link to="/account/orders" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 py-3 px-4 text-sm font-body font-medium text-foreground hover:bg-muted rounded-lg">
                   <User size={18} /> My Account
                 </Link>
               </div>

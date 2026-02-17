@@ -27,7 +27,15 @@ const Products = () => {
   const categorySlug = selectedCategory === "All Products" || selectedCategory === "" ? undefined : selectedCategory.toLowerCase();
   const { data: products, isLoading, error } = useProducts(categorySlug);
   const { data: categoriesData } = useCategories();
-  const categoriesList = categoriesData?.map(c => c.name) || ["Sarees", "Kurtis", "Lehengas", "Suits", "Western Wear"];
+  const categoriesList = [
+    "Sarees",
+    "Kurtis",
+    "Lehenghas",
+    "Duppatas",
+    "New Arrival",
+    "Festive Collection",
+    "Wedding Collection"
+  ];
 
   // Update selected category when URL param changes
   useEffect(() => {
