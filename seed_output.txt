@@ -1,0 +1,16 @@
+Starting seed process at 2026-02-17T13:36:45.129Z
+URL: https://ddzgemgqhnwzdmklzlya.supabase.co
+Existing categories: []
+Category 'Sarees' not found. Error: Cannot coerce the result to a single JSON object
+Starting authenticated seed process at 2026-02-17T13:37:34.788Z
+Auth failed: Invalid login credentials
+Starting authenticated seed process at 2026-02-17T13:38:15.086Z
+Auth failed: Invalid login credentials
+Starting robust authenticated seed process at 2026-02-17T13:38:56.092Z
+Attempting login as aanya@gmail.com...
+Login failed: Invalid login credentials
+Attempting signup as aanya@gmail.com...
+Signup failed: Email address "aanya@gmail.com" is invalid
+Attempting random user creation: seeder_1771335537362@test.com...
+Random user creation failed: Email address "seeder_1771335537362@test.com" is invalid
+Critical error: Cannot authenticate to seed data.
