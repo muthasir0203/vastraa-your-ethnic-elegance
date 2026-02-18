@@ -1,5 +1,5 @@
 Starting detailed verification...
 Login failed: Invalid login credentials. Trying random user...
-Random user creation failed: email rate limit exceeded
+Random user creation failed: Email address "verifier_1771343832182@test.com" is invalid
 Categories found: 0
 Recent products found: 0

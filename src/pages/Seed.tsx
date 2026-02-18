@@ -11,58 +11,56 @@ const Seed = () => {
     const logSuccess = (msg: string) => setStatus((prev) => [...prev, "✅ " + msg]);
     const logError = (msg: string) => setStatus((prev) => [...prev, "❌ " + msg]);
 
+    const authenticate = async () => {
+        log("Authenticating...");
+        const { data: sessionData } = await supabase.auth.getSession();
+
+        if (!sessionData.session) {
+            log("No active session. Attempting login as aanya@gmail.com...");
+            const { error: loginError } = await supabase.auth.signInWithPassword({
+                email: "aanya@gmail.com",
+                password: "aanya1234567"
+            });
+
+            if (loginError) {
+                logError(`Login failed: ${loginError.message}`);
+
+                if (loginError.message.includes("Invalid login credentials")) {
+                    log("Attempting to sign up as aanya@gmail.com...");
+                    const { error: signUpError } = await supabase.auth.signUp({
+                        email: "aanya@gmail.com",
+                        password: "aanya1234567"
+                    });
+
+                    if (signUpError) {
+                        logError(`Signup failed: ${signUpError.message}`);
+                        return false;
+                    } else {
+                        logSuccess("Signed up successfully.");
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                logSuccess("Logged in successfully.");
+                return true;
+            }
+        } else {
+            logSuccess(`Using existing session (${sessionData.session.user.email}).`);
+            return true;
+        }
+    };
+
     const seedProducts = async () => {
         setIsSeeding(true);
         setStatus([]);
         log("Starting seed process...");
 
         try {
-            // 0. Authenticate
-            log("Authenticating...");
-            const { data: sessionData } = await supabase.auth.getSession();
-
-            if (!sessionData.session) {
-                log("No active session. Attempting login as aanya@gmail.com...");
-                const { error: loginError } = await supabase.auth.signInWithPassword({
-                    email: "aanya@gmail.com",
-                    password: "aanya1234567"
-                });
-
-                if (loginError) {
-                    logError(`Login failed: ${loginError.message}`);
-
-                    if (loginError.message.includes("Invalid login credentials")) {
-                        log("Attempting to sign up as aanya@gmail.com...");
-                        const { error: signUpError } = await supabase.auth.signUp({
-                            email: "aanya@gmail.com",
-                            password: "aanya1234567"
-                        });
-
-                        if (signUpError) {
-                            logError(`Signup failed: ${signUpError.message}`);
-
-                            // Try random user
-                            const randomEmail = `seeder_${Date.now()}@test.com`;
-                            log(`Attempting to create temporary user: ${randomEmail}...`);
-                            const { error: randError } = await supabase.auth.signUp({
-                                email: randomEmail,
-                                password: "password123"
-                            });
-
-                            if (randError) {
-                                throw new Error(`Could not authenticate: ${randError.message}`);
-                            } else {
-                                logSuccess(`Created and logged in as ${randomEmail}`);
-                            }
-                        } else {
-                            logSuccess("Signed up successfully.");
-                        }
-                    }
-                } else {
-                    logSuccess("Logged in successfully.");
-                }
-            } else {
-                logSuccess(`Using existing session (${sessionData.session.user.email}).`);
+            const isAuthenticated = await authenticate();
+            if (!isAuthenticated) {
+                logError("Authentication failed. Aborting seed.");
+                return;
             }
 
             // 1. Get Category ID
@@ -116,7 +114,6 @@ const Seed = () => {
                 if (prodError) {
                     if (prodError.message.includes("duplicate key")) {
                         log(`Product ${p.name} already exists. Skipping.`);
-                        // Verify image?
                         continue;
                     }
                     logError(`Failed to insert ${p.name}: ${prodError.message}`);
@@ -152,20 +149,67 @@ const Seed = () => {
         }
     };
 
+    const verifyData = async () => {
+        setStatus([]);
+        log("Verifying data visibility...");
+
+        // 1. Check Category
+        const { data: cats, error: catErr } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('slug', 'sarees');
+
+        if (catErr) {
+            logError(`Category check failed: ${catErr.message}`);
+        } else if (!cats || cats.length === 0) {
+            logError("Category 'sarees' NOT found via select. RLS might be blocking read.");
+        } else {
+            logSuccess(`Category 'sarees' found: ${cats[0].id}`);
+
+            // 2. Check Products
+            const { data: prods, error: prodErr } = await supabase
+                .from('products')
+                .select('*, category:categories(slug)')
+                .eq('category_id', cats[0].id); // simple check first
+
+            if (prodErr) {
+                logError(`Products check failed: ${prodErr.message}`);
+            } else {
+                logSuccess(`Found ${prods?.length} products linked to this category.`);
+                if (prods?.length === 0) {
+                    log("No products found in this category.");
+                } else {
+                    prods?.forEach(p => log(` - ${p.name}`));
+                }
+            }
+        }
+
+        log("NOTE: If you see products here but not on the main page, check your Supabase RLS policies for 'Enable Read Access for All'.");
+    };
+
     return (
         <div className="container py-12 max-w-md mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Product Seeder</h1>
+            <h1 className="text-2xl font-bold mb-6">Product Seeder & Verifier</h1>
             <p className="text-muted-foreground mb-6">
-                Click below to insert {newProducts.length} new saree products into the database.
+                Click "Start Seeding" to insert products. Click "Verify Data" to check if they are visible in the database.
             </p>
 
-            <Button
-                onClick={seedProducts}
-                disabled={isSeeding}
-                className="w-full mb-8"
-            >
-                {isSeeding ? "Seeding..." : "Start Seeding"}
-            </Button>
+            <div className="flex gap-4 mb-8">
+                <Button
+                    onClick={seedProducts}
+                    disabled={isSeeding}
+                    className="flex-1"
+                >
+                    {isSeeding ? "Seeding..." : "Start Seeding"}
+                </Button>
+                <Button
+                    onClick={verifyData}
+                    variant="outline"
+                    className="flex-1"
+                >
+                    Verify Data
+                </Button>
+            </div>
 
             <div className="bg-muted p-4 rounded-lg font-mono text-xs space-y-1 h-96 overflow-y-auto">
                 {status.length === 0 && <span className="text-muted-foreground">Ready...</span>}
