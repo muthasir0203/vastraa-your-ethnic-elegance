@@ -3,46 +3,74 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { UserPlus } from "lucide-react";
+import { Phone } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const Register = () => {
-    const [fullname, setFullname] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState("");
+    const [otp, setOtp] = useState("");
+    const [authStep, setAuthStep] = useState<'PHONE' | 'OTP'>('PHONE');
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
 
-    const handleRegister = async (e: React.FormEvent) => {
+    const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        full_name: fullname,
-                    },
-                },
+            const { error } = await supabase.auth.signInWithOtp({
+                phone: phone,
             });
 
             if (error) throw error;
 
-            if (data.user) {
-                toast({
-                    title: "Account created!",
-                    description: "Please check your email for a confirmation link.",
-                });
-                navigate("/login");
-            }
+            setAuthStep('OTP');
+            toast({
+                title: "OTP Sent!",
+                description: "Please check your phone for the verification code.",
+            });
         } catch (error: any) {
             toast({
                 variant: "destructive",
-                title: "Registration failed",
+                title: "Failed to send OTP",
+                description: error.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const { error } = await supabase.auth.verifyOtp({
+                phone,
+                token: otp,
+                type: 'sms',
+            });
+
+            if (error) throw error;
+
+            toast({
+                title: "Welcome!",
+                description: "Account verified successfully.",
+            });
+            // Navigate to home or complete profile if needed. 
+            // Since we don't capture name here, they might need to update profile later.
+            navigate("/");
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Verification failed",
                 description: error.message,
             });
         } finally {
@@ -55,56 +83,75 @@ const Register = () => {
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-border">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-4">
-                        <UserPlus size={32} />
+                        <Phone size={32} />
                     </div>
-                    <h1 className="text-3xl font-heading font-bold text-primary mb-2">Create Account</h1>
-                    <p className="text-muted-foreground font-body">Join Vastraa and start shopping</p>
+                    <h1 className="text-3xl font-heading font-bold text-primary mb-2">
+                        {authStep === 'PHONE' ? 'Create Account' : 'Verify Phone'}
+                    </h1>
+                    <p className="text-muted-foreground font-body">
+                        {authStep === 'PHONE'
+                            ? 'Sign up with your phone number'
+                            : `Enter the code sent to ${phone}`
+                        }
+                    </p>
                 </div>
 
-                <form className="space-y-4" onSubmit={handleRegister}>
-                    <div className="space-y-2">
-                        <Label htmlFor="fullname">Full Name</Label>
-                        <Input
-                            id="fullname"
-                            type="text"
-                            placeholder="John Doe"
-                            className="rounded-xl h-12"
-                            value={fullname}
-                            onChange={(e) => setFullname(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="name@example.com"
-                            className="rounded-xl h-12"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            className="rounded-xl h-12"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <Button
-                        className="w-full h-12 rounded-xl text-lg font-medium transition-all hover:scale-[1.02]"
-                        disabled={loading}
-                    >
-                        {loading ? "Creating Account..." : "Sign Up"}
-                    </Button>
-                </form>
+                {authStep === 'PHONE' ? (
+                    <form className="space-y-4" onSubmit={handleSendOtp}>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number</Label>
+                            <Input
+                                id="phone"
+                                type="tel"
+                                placeholder="+91 98765 43210"
+                                className="rounded-xl h-12"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <Button
+                            className="w-full h-12 rounded-xl text-lg font-medium transition-all hover:scale-[1.02]"
+                            disabled={loading}
+                        >
+                            {loading ? "Sending OTP..." : "Send OTP"}
+                        </Button>
+                    </form>
+                ) : (
+                    <form className="space-y-4" onSubmit={handleVerifyOtp}>
+                        <div className="space-y-2 flex justify-center">
+                            <InputOTP
+                                maxLength={6}
+                                value={otp}
+                                onChange={(value) => setOtp(value)}
+                            >
+                                <InputOTPGroup>
+                                    <InputOTPSlot index={0} />
+                                    <InputOTPSlot index={1} />
+                                    <InputOTPSlot index={2} />
+                                    <InputOTPSlot index={3} />
+                                    <InputOTPSlot index={4} />
+                                    <InputOTPSlot index={5} />
+                                </InputOTPGroup>
+                            </InputOTP>
+                        </div>
+                        <Button
+                            className="w-full h-12 rounded-xl text-lg font-medium transition-all hover:scale-[1.02]"
+                            disabled={loading}
+                        >
+                            {loading ? "Verifying..." : "Verify OTP"}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            className="w-full"
+                            onClick={() => setAuthStep('PHONE')}
+                            disabled={loading}
+                        >
+                            Change Phone Number
+                        </Button>
+                    </form>
+                )}
 
                 <div className="mt-8 pt-6 border-t border-border text-center">
                     <p className="text-sm text-muted-foreground">

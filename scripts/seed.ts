@@ -14,7 +14,7 @@ const newProducts = [
         stock_quantity: 15,
         vehicle: "Sarees",
         fabric: "Silk",
-        image_url: "/red-saree.jpg"
+        image_url: "/images/red-saree.jpg"
     },
     {
         name: "Aesthetic Pink Georgette Saree",
@@ -24,7 +24,7 @@ const newProducts = [
         stock_quantity: 25,
         vehicle: "Sarees",
         fabric: "Georgette",
-        image_url: "/aesthetic-pink-saree.jpg"
+        image_url: "/images/aesthetic-pink-saree.jpg"
     },
     {
         name: "Pistachio Green Handloom Khadi Silk",
@@ -34,7 +34,7 @@ const newProducts = [
         stock_quantity: 10,
         vehicle: "Sarees",
         fabric: "Cotton",
-        image_url: "/pistachio-green-saree.jpg"
+        image_url: "/images/pistachio-green-saree.jpg"
     },
     {
         name: "Royal Blue Silk Saree",
@@ -44,7 +44,7 @@ const newProducts = [
         stock_quantity: 20,
         vehicle: "Sarees",
         fabric: "Silk",
-        image_url: "/blue-silk-saree.jpg"
+        image_url: "/images/blue-silk-saree.jpg"
     },
     {
         name: "Elegant White Floral Saree",
@@ -54,7 +54,17 @@ const newProducts = [
         stock_quantity: 30,
         vehicle: "Sarees",
         fabric: "Chiffon",
-        image_url: "/white-floral-saree.jpg"
+        image_url: "/images/white-floral-saree.jpg"
+    },
+    {
+        name: "Elegant Blue Silk Saree",
+        description: "A stunning blue silk saree with intricate golden embroidery, perfect for festive occasions.",
+        price: 3499,
+        original_price: 5999,
+        stock_quantity: 15,
+        vehicle: "Sarees",
+        fabric: "Silk",
+        image_url: "/images/saree-new.jpg"
     }
 ];
 
