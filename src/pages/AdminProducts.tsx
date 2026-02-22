@@ -12,7 +12,8 @@ import {
     ShoppingBag,
     Users,
     LogOut,
-    ChevronLeft
+    ChevronLeft,
+    Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,7 +98,8 @@ const AdminProducts = () => {
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const { error } = await supabase
+            // 1. Insert product
+            const { data: productData, error: prodError } = await supabase
                 .from('products')
                 .insert([{
                     name: formData.name,
@@ -105,9 +107,24 @@ const AdminProducts = () => {
                     stock_quantity: parseInt(formData.stock),
                     category_id: formData.category_id,
                     description: formData.description
-                }]);
+                }])
+                .select()
+                .single();
 
-            if (error) throw error;
+            if (prodError) throw prodError;
+
+            // 2. Insert image if provided
+            if (formData.image_url && productData) {
+                const { error: imgError } = await supabase
+                    .from('product_images')
+                    .insert([{
+                        product_id: productData.id,
+                        url: formData.image_url,
+                        is_primary: true
+                    }]);
+
+                if (imgError) throw imgError;
+            }
 
             toast({
                 title: "Success",
@@ -174,11 +191,14 @@ const AdminProducts = () => {
                     <Link to="/admin/products" className="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-xl font-medium">
                         <Package size={20} /> Products
                     </Link>
+                    <Link to="/admin/collections" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
+                        <Layers size={20} /> Collections
+                    </Link>
                     <Link to="/account/orders" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
                         <ShoppingBag size={20} /> Orders
                     </Link>
-                    <Link to="/" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
-                        <Users size={20} /> Customers
+                    <Link to="/admin/users" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
+                        <Users size={20} /> Users
                     </Link>
                 </nav>
                 <div className="p-4 border-t border-border">
@@ -226,6 +246,10 @@ const AdminProducts = () => {
                                             <Label htmlFor="stock">Stock</Label>
                                             <Input id="stock" type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} placeholder="50" required />
                                         </div>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="image_url">Image URL</Label>
+                                        <Input id="image_url" value={formData.image_url} onChange={e => setFormData({ ...formData, image_url: e.target.value })} placeholder="/images/product.jpg" />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="category">Category</Label>

@@ -58,7 +58,7 @@ async function run() {
             "INSERT INTO product_images (product_id, url, is_primary) VALUES ($1, $2, $3)",
             [
                 productId,
-                'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1000&auto=format&fit=crop',
+                'https://tse1.explicit.bing.net/th/id/OIP.IhiE0IGKh7px_O3DHapv4AHaKX?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3',
                 true
             ]
         );

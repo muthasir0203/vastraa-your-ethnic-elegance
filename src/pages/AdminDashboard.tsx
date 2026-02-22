@@ -9,7 +9,8 @@ import {
     LogOut,
     Plus,
     Settings,
-    Bell
+    Bell,
+    Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -60,11 +61,14 @@ const AdminDashboard = () => {
                     <Link to="/admin/products" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
                         <Package size={20} /> Products
                     </Link>
+                    <Link to="/admin/collections" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
+                        <Layers size={20} /> Collections
+                    </Link>
                     <Link to="/account/orders" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
                         <ShoppingBag size={20} /> Orders
                     </Link>
-                    <Link to="/" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
-                        <Users size={20} /> Customers
+                    <Link to="/admin/users" className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-muted rounded-xl transition-all">
+                        <Users size={20} /> Users
                     </Link>
                 </nav>
                 <div className="p-4 border-t border-border">

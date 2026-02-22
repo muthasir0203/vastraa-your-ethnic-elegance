@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS products (
     name TEXT NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
+    original_price DECIMAL(10, 2),
     stock_quantity INTEGER DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -88,6 +89,19 @@ ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read on categories" ON categories FOR SELECT USING (true);
 CREATE POLICY "Allow public read on products" ON products FOR SELECT USING (true);
 CREATE POLICY "Allow public read on product_images" ON product_images FOR SELECT USING (true);
+
+-- Admin management policies
+CREATE POLICY "Admins can insert categories" ON categories FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can update categories" ON categories FOR UPDATE USING (true);
+CREATE POLICY "Admins can delete categories" ON categories FOR DELETE USING (true);
+
+CREATE POLICY "Admins can insert products" ON products FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can update products" ON products FOR UPDATE USING (true);
+CREATE POLICY "Admins can delete products" ON products FOR DELETE USING (true);
+
+CREATE POLICY "Admins can insert product_images" ON product_images FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can update product_images" ON product_images FOR UPDATE USING (true);
+CREATE POLICY "Admins can delete product_images" ON product_images FOR DELETE USING (true);
 
 -- User-specific policies (Requires Authentication)
 CREATE POLICY "Users can manage their own addresses" ON addresses 
