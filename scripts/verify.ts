@@ -14,30 +14,17 @@ function log(msg: string) {
 async function verify() {
     log("Starting detailed verification...");
 
-    // 1. Authenticate (Try robustly like Seed.tsx)
+    // 1. Authenticate (Skipping auth for public read access)
+    log("Skipping auth for public read access...");
+    /*
     let authUser = null;
     const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
         email: 'aanya@gmail.com',
         password: 'aanya1234567'
     });
+    ...
+    */
 
-    if (!loginError && loginData.user) {
-        log("Login successful.");
-        authUser = loginData.user;
-    } else {
-        log(`Login failed: ${loginError?.message}. Trying random user...`);
-        const randomEmail = `verifier_${Date.now()}@test.com`;
-        const { data: randData, error: randError } = await supabase.auth.signUp({
-            email: randomEmail,
-            password: 'password123'
-        });
-        if (!randError && randData.user) {
-            log("Random user creation successful.");
-            authUser = randData.user;
-        } else {
-            log(`Random user creation failed: ${randError?.message}`);
-        }
-    }
 
     // 2. Check Categories
     const { data: categories, error: catError } = await supabase

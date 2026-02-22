@@ -65,6 +65,16 @@ const newProducts = [
         vehicle: "Sarees",
         fabric: "Silk",
         image_url: "/images/saree-new.jpg"
+    },
+    {
+        name: "Wine Colour Lichi Silk Traditional Saree VSSD1112204",
+        description: "Grab These Stunning Festive Wear Sarees In Beautiful, Vibrant Colors. Crafted From Luxurious Lichi Silk, The Saree And Blouse Offer A Soft, Elegant Feel. Adorned With Intricately Woven Rich Pallu Designer Work, These Sarees Add A Touch Of Sophistication, Making Them The Perfect Choice For Any Celebration Or Special Occasion.",
+        price: 1999,
+        original_price: 3999,
+        stock_quantity: 20,
+        vehicle: "Sarees",
+        fabric: "Silk",
+        image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1000&auto=format&fit=crop"
     }
 ];
 
