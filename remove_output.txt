@@ -1,0 +1,6 @@
+Attempting to remove product: Mysore Silk Saree
+Found 1 matching products:
+ - [6ccf6a49-b69b-45a5-8acf-8707774aaa78] mysore silk saree
+Deleting product IDs: 6ccf6a49-b69b-45a5-8acf-8707774aaa78...
+Deleted associated images.
+Successfully removed 1 product(s).
